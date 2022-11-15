@@ -28,12 +28,20 @@ module.exports = function(passport){
             console.error(error)
         }
     }))
+    
     passport.serializeUser((user, done) => {
-        done(null, user.id)
+        process.nextTick(() => {
+          return done(null, {
+            id: user.googleId,
+            username: user.displayName,
+            picture: user.image
+          });
+        });
     })
-    passport.deserializeUser((id, done) => {
-        User.findById(id, (err, user) => 
-            done(err, user)
-        )
+    passport.deserializeUser((user, done) => {
+        process.nextTick(() => {
+          return done(null, user);
+        });
     })
+    
 }
